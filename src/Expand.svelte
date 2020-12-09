@@ -1,15 +1,10 @@
 <script>
   import boop from './boop.js';
 
-  let isBooped = false;
   let expanded = false;
-
-  function setIsBooped(val) {
-    isBooped = val;
-  }
+  let boopElement;
 
   function handleClick() {
-    isBooped = true; // for demo on mobile
     expanded = true;
   }
 </script>
@@ -37,9 +32,11 @@
   }
 </style>
 
-<button on:mouseenter={() => (isBooped = true)} on:click={handleClick}>
+<button
+  use:boop={{ triggers: ['click', 'mouseenter'], x: 5, timing: 200, boopElement }}
+  on:click={handleClick}>
   <span class="buttonText">Show more</span>
-  <span use:boop={{ isBooped, x: 5, timing: 200, setter: setIsBooped }}>
+  <span bind:this={boopElement}>
     <i fill="currentColor" style="display:inline-block">
       <svg
         fill="none"

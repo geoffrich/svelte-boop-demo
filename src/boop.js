@@ -8,7 +8,22 @@ function getPrefersReducedMotion() {
 }
 
 export default function boop(node, params) {
-  let { setter } = params;
+  if (getPrefersReducedMotion()) return;
+  let {
+    triggers = [],
+    x = 0,
+    y = 0,
+    rotation = 0,
+    scale = 1,
+    timing = 100,
+    boopElement
+  } = params;
+  let timeoutId;
+
+  triggers.forEach((trigger) => {
+    node.addEventListener(trigger, handleTrigger);
+  });
+
   let springyRotation = spring(
     { x: 0, y: 0, rotation: 0, scale: 1 },
     {
@@ -16,29 +31,38 @@ export default function boop(node, params) {
       damping: 0.15
     }
   );
-  let prefersReducedMotion = getPrefersReducedMotion();
 
-  node.style = `display: inline-block`;
+  function handleTrigger() {
+    clearTimeout(timeoutId);
+    springyRotation.set({ x, y, rotation, scale });
+
+    timeoutId = setTimeout(() => {
+      springyRotation.set({ x: 0, y: 0, rotation: 0, scale: 1 });
+    }, timing);
+  }
 
   const unsubscribe = springyRotation.subscribe(({ x, y, rotation, scale }) => {
-    node.style.transform =
-      !prefersReducedMotion &&
-      `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(${scale})`;
+    const element = boopElement || node;
+    element.style.display = 'inline-block';
+    element.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(${scale})`;
   });
 
   return {
-    update({ isBooped, x = 0, y = 0, rotation = 0, scale = 1, timing }) {
-      springyRotation.set(
-        isBooped
-          ? { x, y, rotation, scale }
-          : { x: 0, y: 0, rotation: 0, scale: 1 }
-      );
-
-      if (isBooped) {
-        window.setTimeout(() => setter(false), timing);
-      }
+    update(params) {
+      ({
+        x = 0,
+        y = 0,
+        rotation = 0,
+        scale = 1,
+        timing = 100,
+        boopElement
+      } = params);
     },
     destroy() {
+      clearTimeout(timeoutId);
+      triggers.forEach((trigger) => {
+        node.removeEventListener(trigger, handleTrigger);
+      });
       unsubscribe();
     }
   };
