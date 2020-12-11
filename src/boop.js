@@ -7,22 +7,16 @@ function getPrefersReducedMotion() {
   return prefersReducedMotion;
 }
 
-export default function boop(node, params) {
+export default function boop(
+  node,
+  { x = 0, y = 0, rotation = 0, scale = 1, timing = 100, boopElement }
+) {
   if (getPrefersReducedMotion()) return;
-  let {
-    triggers = [],
-    x = 0,
-    y = 0,
-    rotation = 0,
-    scale = 1,
-    timing = 100,
-    boopElement
-  } = params;
   let timeoutId;
 
-  triggers.forEach((trigger) => {
-    node.addEventListener(trigger, handleTrigger);
-  });
+  node.addEventListener('mouseenter', handleBoop);
+  // only for demo purposes on mobile
+  node.addEventListener('click', handleBoop);
 
   let springyRotation = spring(
     { x: 0, y: 0, rotation: 0, scale: 1 },
@@ -32,7 +26,7 @@ export default function boop(node, params) {
     }
   );
 
-  function handleTrigger() {
+  function handleBoop() {
     clearTimeout(timeoutId);
     springyRotation.set({ x, y, rotation, scale });
 
@@ -60,9 +54,8 @@ export default function boop(node, params) {
     },
     destroy() {
       clearTimeout(timeoutId);
-      triggers.forEach((trigger) => {
-        node.removeEventListener(trigger, handleTrigger);
-      });
+      node.removeEventListener('mouseenter', handleBoop);
+      node.removeEventListener('click', handleBoop);
       unsubscribe();
     }
   };

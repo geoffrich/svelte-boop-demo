@@ -3,7 +3,6 @@
   export let boopParams;
 </script>
 
-<!-- trigger onclick so demo works on mobile -->
-<span use:boop={{ triggers: ['click', 'mouseenter'], ...boopParams }}>
+<span use:boop={{ ...boopParams }}>
   <slot />
 </span>

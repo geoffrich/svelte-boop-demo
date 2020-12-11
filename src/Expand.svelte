@@ -32,9 +32,7 @@
   }
 </style>
 
-<button
-  use:boop={{ triggers: ['click', 'mouseenter'], x: 5, timing: 200, boopElement }}
-  on:click={handleClick}>
+<button use:boop={{ x: 5, timing: 200, boopElement }} on:click={handleClick}>
   <span class="buttonText">Show more</span>
   <span bind:this={boopElement}>
     <i fill="currentColor" style="display:inline-block">
