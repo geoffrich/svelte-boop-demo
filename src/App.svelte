@@ -13,13 +13,13 @@
 <h1>Boop hover animations</h1>
 
 <h2>A <code>boop</code> action</h2>
-<Boop boopParams={{ rotation: 20, timing: 200 }}>
+<Boop boopParams={{ rotation: 20 }}>
   <HelpButton />
 </Boop>
-<Boop boopParams={{ scale: 1.2, timing: 200 }}>
+<Boop boopParams={{ scale: 1.2 }}>
   <HelpButton />
 </Boop>
-<Boop boopParams={{ y: 5, timing: 200 }}>
+<Boop boopParams={{ y: 5 }}>
   <HelpButton />
 </Boop>
 

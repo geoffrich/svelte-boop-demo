@@ -9,14 +9,14 @@ function getPrefersReducedMotion() {
 
 export default function boop(
   node,
-  { x = 0, y = 0, rotation = 0, scale = 1, timing = 100, boopElement }
+  { x = 0, y = 0, rotation = 0, scale = 1, timing = 150, boopElement }
 ) {
   if (getPrefersReducedMotion()) return;
   let timeoutId;
 
-  node.addEventListener('mouseenter', handleBoop);
+  node.addEventListener('mouseenter', handleMouseEnter);
   // only for demo purposes on mobile
-  node.addEventListener('click', handleBoop);
+  node.addEventListener('click', handleMouseEnter);
 
   let springyRotation = spring(
     { x: 0, y: 0, rotation: 0, scale: 1 },
@@ -26,7 +26,7 @@ export default function boop(
     }
   );
 
-  function handleBoop() {
+  function handleMouseEnter() {
     clearTimeout(timeoutId);
     springyRotation.set({ x, y, rotation, scale });
 
@@ -35,11 +35,13 @@ export default function boop(
     }, timing);
   }
 
-  const unsubscribe = springyRotation.subscribe(({ x, y, rotation, scale }) => {
+  function transformElement({ x, y, rotation, scale }) {
     const element = boopElement || node;
     element.style.display = 'inline-block';
     element.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(${scale})`;
-  });
+  }
+
+  let unsubscribe = springyRotation.subscribe(transformElement);
 
   return {
     update(params) {
@@ -48,14 +50,14 @@ export default function boop(
         y = 0,
         rotation = 0,
         scale = 1,
-        timing = 100,
+        timing = 150,
         boopElement
       } = params);
     },
     destroy() {
       clearTimeout(timeoutId);
-      node.removeEventListener('mouseenter', handleBoop);
-      node.removeEventListener('click', handleBoop);
+      node.removeEventListener('mouseenter', handleMouseEnter);
+      node.removeEventListener('click', handleMouseEnter);
       unsubscribe();
     }
   };
